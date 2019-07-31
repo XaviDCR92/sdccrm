@@ -1,7 +1,7 @@
 # sdccrm
 
 ## What is sdccrm?
-sdcc is a dead code optimization tool for the stm8 port of sdcc that removes unused functions. By configuring an entry point, sdccrm creates a function call tree and determines which labels can be optimized away.
+sdccrm is a dead code optimization tool for the stm8 port of sdcc that removes unused functions. By configuring an entry point, sdccrm creates a function call tree and determines which labels can be optimized away.
 
 ## Usage
 ```bash

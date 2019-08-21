@@ -27,7 +27,7 @@
 
 const char *get_line(const char *p, char *const line, size_t *const len)
 {
-    if (line && len)
+    if (line && len && p)
     {
         while (*p)
         {
@@ -58,10 +58,17 @@ const char *get_line(const char *p, char *const line, size_t *const len)
                     p++;
                 }
 
-                /* A line has been read. */
-                line[(*len)++] = '\0';
+                if (*len)
+                {
+                    /* A line has been read. */
+                    line[(*len)++] = '\0';
 
-                return p;
+                    return p;
+                }
+                else
+                {
+                    /* End of file has been reached. */
+                }
             }
         }
     }
@@ -79,21 +86,36 @@ char *open(const char *const path)
         {
             const size_t sz = ftell(f);
 
+            if (!sz)
+            {
+                goto f_error;
+            }
+
             if (!fseek(f, 0, SEEK_SET))
             {
-                char *const buf = malloc(sz);
+                char *const buf = malloc((sz + 1) * sizeof *buf);
 
-                const size_t read = fread(buf, sizeof (*buf), sz, f);
-
-                if (read == sz)
+                if (buf)
                 {
-                    fclose(f);
-                    return buf;
+                    const size_t read = fread(buf, sizeof (*buf), sz, f);
+
+                    if (read == sz)
+                    {
+                        fclose(f);
+                        /* Treat text files as a NULL-terminated string. */
+                        buf[sz] = '\0';
+                        return buf;
+                    }
+                    else
+                    {
+                        fprintf(stderr, "Only %ld out of %ld bytes were read from %s\n", read, sz, path);
+                        free(buf);
+                        goto f_error;
+                    }
                 }
                 else
                 {
-                    fprintf(stderr, "Only %ld out of %ld bytes were read from %s\n", read, sz, path);
-                    free(buf);
+                    fprintf(stderr, "Could not allocate memory buffer for file %s\n", path);
                     goto f_error;
                 }
             }

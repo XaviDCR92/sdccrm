@@ -30,15 +30,15 @@
 #define WARNING(str, ...)                                   \
     if (verbose())                                          \
     {                                                       \
-        fprintf(stderr, "%s(), %d: (warning) " str ".\n",    \
-            __FUNCTION__, __LINE__, __VA_ARGS__);           \
+        fprintf(stderr, "%s(), %d: (warning) " str ".\n",   \
+            __func__, __LINE__, __VA_ARGS__);               \
     }
 
-#define LOG(str, ...)                               \
-    if (verbose())                                  \
-    {                                               \
-        printf("%s(), %d: " str ".\n",               \
-            __FUNCTION__, __LINE__, __VA_ARGS__);   \
+#define LOG(str, ...)                           \
+    if (verbose())                              \
+    {                                           \
+        printf("%s(), %d: " str ".\n",          \
+            __func__, __LINE__, __VA_ARGS__);   \
     }
 
 bool verbose(void);
@@ -48,5 +48,7 @@ void enable_verbose(void);
 void exclude_label(const char *const l);
 bool is_label_excluded(const char *const l);
 void options_cleanup(void);
+int parse_options(const int offset, const int argc, const char *const *const argv);
+void usage(void);
 
 #endif /* OPTIONS_H */

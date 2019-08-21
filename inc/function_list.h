@@ -18,9 +18,11 @@
  *
  */
 
-#ifndef SDCC_FUNC_LIST_H
-#define SDCC_FUNC_LIST_H
+#ifndef FUNCTION_LIST_H
+#define FUNCTION_LIST_H
 
-struct tree get_function_list(const size_t n_files, const char *const *const files);
+#include <stddef.h>
 
-#endif /* SDCC_FUNC_LIST_H */
+struct tree get_function_list(const size_t n_files, const char *const *files);
+
+#endif /* FUNCTION_LIST_H */

@@ -19,10 +19,48 @@
  */
 
 #include "options.h"
+#include "common.h"
+#include "alloc.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#define PARAM_STR "[param]"
+
+static const struct
+{
+    const char *flag;
+    const char *descr;
+    bool param;
+    union
+    {
+        void (*f)(void);
+        void (*f_param)(const char *);
+    };
+} options[] =
+{
+    {
+        .flag = "-v",
+        .descr = "Enables verbose mode",
+        .param = false,
+        .f = enable_verbose
+    },
+
+    {
+        .flag = "-x",
+        .descr = "Excludes a given label " PARAM_STR " from being removed",
+        .param = true,
+        .f_param = exclude_label
+    },
+
+    {
+        .flag = "-e",
+        .descr = "Sets " PARAM_STR " as entry label. Defaults to " DEFAULT_ENTRY_LABEL,
+        .param = true,
+        .f_param = set_entry_label
+    }
+};
 
 static struct
 {
@@ -79,7 +117,7 @@ void exclude_label(const char *const l)
     {
         if (!is_label_excluded(l))
         {
-            config.excluded_labels = realloc(config.excluded_labels, (config.n_excluded_labels + 1) * sizeof *config.excluded_labels);
+            config.excluded_labels = alloc(config.excluded_labels, config.n_excluded_labels);
         }
         else
         {
@@ -103,5 +141,79 @@ void options_cleanup(void)
     if (config.excluded_labels)
     {
         free(config.excluded_labels);
+    }
+}
+
+int parse_options(const int offset, const int argc, const char *const *const argv)
+{
+    /* Calculate where file list starts. If options
+     * are given, this index shall be increased. */
+    int i;
+
+    bool reading_parameter = false;
+    size_t param_i;
+
+    for (i = offset; i < argc; i++)
+    {
+        const char *const option = argv[i];
+
+        if (*option == '-')
+        {
+            for (size_t j = 0; j < lengthof (options); j++)
+            {
+                if (!strcmp(option, options[j].flag))
+                {
+                    if (options[j].param)
+                    {
+                        reading_parameter = true;
+                        param_i = j;
+                    }
+                    else
+                    {
+                        if (options[j].f)
+                        {
+                            options[j].f();
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+        else if (reading_parameter)
+        {
+            if (options[param_i].f_param)
+            {
+                options[param_i].f_param(option);
+            }
+            else
+            {
+                WARNING("No callback defined for flag %s", options[param_i].flag);
+            }
+
+            reading_parameter = false;
+        }
+        else
+        {
+            /* End of option switches. */
+            break;
+        }
+    }
+
+    return i;
+}
+
+void usage(void)
+{
+    /* Avoid using define so only one copy is stored. */
+    static const char app[] = "sdccrm";
+
+    printf("Usage:\n%s [options] file1 file2 ... filen\n", app);
+
+    printf("Options:\n");
+
+    for (size_t i = 0; i < lengthof (options); i++)
+    {
+        printf("%s%s%s.\n", options[i].flag, options[i].param ? " " PARAM_STR "\t" : "\t\t", options[i].descr);
     }
 }

@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef SDCCRM_COMMON_H
-#define SDCCRM_COMMON_H
+#ifndef COMMON_H
+#define COMMON_H
 
 #include <stddef.h>
 #include <stdbool.h>
@@ -30,6 +30,8 @@ enum
     MAX_CH_PER_LINE = 128
 };
 
+#if defined(__GNUC__) && __STDC_VERSION__ >= 201112L
+
 /* This macro generates compile-time errors when
  * a pointer (instead of an array) is being used. */
 #define lengthof(a)                         \
@@ -37,6 +39,13 @@ enum
     typeof (*a) **: (void) 0,               \
     typeof (*a) *const *: (void) 0,         \
     default: sizeof (a) / sizeof ((a)[0]))
+
+#else
+
+/* Unsafe yet portable version. */
+#define lengthof(a) (sizeof (a) / sizeof ((a)[0]))
+
+#endif
 
 /* This macro calculates string length at compile-time.
  * Take into account pointers are not valid and will
@@ -66,6 +75,11 @@ struct label
     size_t start_line;
     size_t end_line;
 };
+
+typedef struct
+{
+    bool global;
+} labell;
 
 const char *get_line(const char *p, char *const line, size_t *const len);
 char *open(const char *path);

@@ -18,11 +18,11 @@
  *
  */
 
-#ifndef SDCC_REFERENCES_H
-#define SDCC_REFERENCES_H
+#ifndef REFERENCES_H
+#define REFERENCES_H
 
 #include "common.h"
 
 void find_references(struct tree *t);
 
-#endif /* SDCC_REFERENCES_H */
+#endif /* REFERENCES_H */

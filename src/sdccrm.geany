@@ -28,25 +28,22 @@ long_line_behaviour=1
 long_line_column=120
 
 [files]
-current_page=2
-FILE_NAME_0=1099;Make;0;EUTF-8;1;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2FMakefile;0;4
-FILE_NAME_1=1647;C++;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Fsrc%2Fcommon.h;0;4
-FILE_NAME_2=4741;C;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Fsrc%2Ffunction_list.c;0;4
-FILE_NAME_3=890;C++;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Fsrc%2Ffunction_list.h;0;4
-FILE_NAME_4=1844;C;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Fsrc%2Fsdccrm.c;0;4
-FILE_NAME_5=2859;C;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Fsrc%2Fcommon.c;0;4
-FILE_NAME_6=566;C++;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Fsrc%2Freferences.h;0;4
-FILE_NAME_7=0;C;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Fsrc%2Freferences.c;0;4
-FILE_NAME_8=1005;C;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Fsrc%2Foptions.c;0;4
-FILE_NAME_9=922;C++;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Fsrc%2Foptions.h;0;4
+current_page=14
+FILE_NAME_0=1201;Make;0;EUTF-8;1;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2FMakefile;0;4
+FILE_NAME_1=3233;C;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Fsrc%2Ffunction_list.c;0;4
+FILE_NAME_2=1966;C;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Fsrc%2Fsdccrm.c;0;4
+FILE_NAME_3=4729;C;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Fsrc%2Foptions.c;0;4
+FILE_NAME_4=2995;C;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Fsrc%2Fcommon.c;0;4
+FILE_NAME_5=1010;C;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Fsrc%2Freferences.c;0;4
+FILE_NAME_6=243;C;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Fsrc%2Falloc.c;0;4
+FILE_NAME_7=107;C++;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Finc%2Falloc.h;0;4
+FILE_NAME_8=1736;C++;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Finc%2Fcommon.h;0;4
+FILE_NAME_9=0;C++;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Finc%2Ffunction_list.h;0;4
+FILE_NAME_10=1458;C++;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Finc%2Foptions.h;0;4
+FILE_NAME_11=0;C++;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Finc%2Freferences.h;0;4
+FILE_NAME_12=1310;C;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Fsrc%2Fremove_unused.c;0;4
+FILE_NAME_13=566;C++;0;EUTF-8;0;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2Fsdccrm%2Finc%2Fremove_unused.h;0;4
+FILE_NAME_14=502;Make;0;EUTF-8;1;1;0;%2Fhome%2Fxavier%2FHandheld%2FSTM8%2FMakefile;0;4
 
 [VTE]
 last_dir=/home/xavier/Handheld/STM8/sdccrm
-
-[build-menu]
-NF_00_LB=_Make
-NF_00_CM=make
-NF_00_WD=%p
-EX_00_LB=_Execute
-EX_00_CM=./sdccrm -v ../obj/main.asm
-EX_00_WD=%p

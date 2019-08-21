@@ -27,8 +27,9 @@ LD = gcc
 MKDIR = mkdir
 
 # Compiler flags
-CC_FLAGS = -O0 -g -Wall -c
-LD_FLAGS =
+INCLUDE = -Iinc/
+CC_FLAGS = -O0 -g $(INCLUDE) -Wall -Wextra -Wpedantic -c
+LD_FLAGS = $(INCLUDE)
 # Linker flags
 LIBS =
 
@@ -39,7 +40,8 @@ PROJECT = sdccrm
 OBJ_DIR = obj
 SRC_DIR = src
 OBJECTS = $(addprefix $(OBJ_DIR)/, \
-	sdccrm.o function_list.o references.o common.o options.o remove_unused.o)
+	sdccrm.o function_list.o references.o common.o options.o \
+	remove_unused.o alloc.o)
 
 # Source dependencies:
 DEPS = $(OBJECTS:.o=.d)

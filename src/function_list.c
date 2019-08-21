@@ -18,6 +18,8 @@
  *
  */
 
+#include "function_list.h"
+#include "alloc.h"
 #include "common.h"
 #include "options.h"
 #include <stddef.h>
@@ -29,7 +31,7 @@
 static bool is_label(const char *line, size_t length);
 static bool is_call(const char *line);
 static const char *get_call(const char *line);
-static const struct file parse(const char *buf);
+static struct file parse(const char *buf);
 static void append_label(const char *p, size_t line_no, const char *line, struct label *l);
 static void append_global_label(const char *p, size_t line_no, const char *line, struct label *l);
 static void append_static_label(const char *p, size_t line_no, const char *line, struct label *l);
@@ -51,16 +53,7 @@ struct tree get_function_list(const size_t n_files, const char *const *const fil
         {
             const struct file label_list = parse(buf);
 
-            if (!t.files)
-            {
-                t.files = malloc(sizeof *t.files);
-            }
-            else
-            {
-                const size_t processed_files = t.n_files + 1;
-
-                t.files = realloc(t.files, sizeof (*t.files) * (processed_files));
-            }
+            t.files = alloc(t.files, t.n_files);
 
             if (t.files)
             {
@@ -77,7 +70,7 @@ struct tree get_function_list(const size_t n_files, const char *const *const fil
     return t;
 }
 
-static const struct file parse(const char *const buf)
+static struct file parse(const char *const buf)
 {
     const char *p = buf;
     char line[MAX_CH_PER_LINE];
@@ -98,14 +91,7 @@ static const struct file parse(const char *const buf)
 
         if (global_label)
         {
-            if (!global.names)
-            {
-                global.names = malloc(sizeof *global.names);
-            }
-            else
-            {
-                global.names = realloc(global.names, (global.n + 1) * sizeof *global.names);
-            }
+            global.names = alloc(global.names, global.n);
 
             if (global.names)
             {
@@ -113,6 +99,9 @@ static const struct file parse(const char *const buf)
 
                 /* Dump global label name into the list. */
                 strcpy(global.names[global.n++], global_label);
+            }
+            else
+            {
             }
         }
         else if (!area_code_found)
@@ -128,14 +117,7 @@ static const struct file parse(const char *const buf)
             /* Check whether found label is global. */
             bool match = false;
 
-            if (!f.labels)
-            {
-                f.labels = malloc(sizeof *f.labels);
-            }
-            else
-            {
-                f.labels = realloc(f.labels, sizeof (*f.labels) * (f.n_labels + 1));
-            }
+            f.labels = alloc(f.labels, f.n_labels);
 
             if (f.labels)
             {
@@ -168,14 +150,7 @@ static const struct file parse(const char *const buf)
             const char *const called_label = get_call(line);
             struct label *const l = &f.labels[f.n_labels - 1];
 
-            if (!l->calls)
-            {
-                l->calls = malloc(sizeof *l->calls);
-            }
-            else
-            {
-                l->calls = realloc(l->calls, (l->n_calls + 1) * sizeof *l->calls);
-            }
+            l->calls = alloc(l->calls, l->n_calls);
 
             if (l->calls)
             {
@@ -191,6 +166,20 @@ static const struct file parse(const char *const buf)
                 }
             }
         }
+    }
+
+    /* Clean up locally allocated data. */
+    if (global.names)
+    {
+        for (size_t i = 0; i < global.n; i++)
+        {
+            if (global.names[i])
+            {
+                free(global.names[i]);
+            }
+        }
+
+        free(global.names);
     }
 
     return f;

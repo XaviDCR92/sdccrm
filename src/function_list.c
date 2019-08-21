@@ -63,6 +63,11 @@ struct tree get_function_list(const size_t n_files, const char *const *const fil
 
             free(buf);
         }
+        else
+        {
+            /* File could not be read for some reason. */
+            break;
+        }
     }
 
     return t;
@@ -210,12 +215,17 @@ static size_t get_label_end(const char *p, size_t line_no)
 {
     size_t len;
     char line[MAX_CH_PER_LINE];
+    bool search = false;
 
     for (line_no += 1; (p = get_line(p, line, &len)); line_no++)
     {
-        if (!strcmp(line, "ret") || !strcmp(line, "iret"))
+        if (!search)
         {
-            return line_no;
+            search = true;
+        }
+        else if (is_label(line, len) || strstr(line, ".area"))
+        {
+            return line_no - 1;
         }
     }
 

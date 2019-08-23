@@ -26,17 +26,18 @@
 #include <string.h>
 #include <ctype.h>
 
+#define CALL_DIRECTIVE "call"
+
 static bool is_label(const char *line, size_t length);
 static bool is_call(const char *line);
+static const char *get_ref(const char *line);
 static const char *get_call(const char *line);
 static struct file parse(const char *buf);
+static void append_called_label(const char *const called_label, struct file *const f);
 static void append_label(const char *p, size_t line_no, const char *line, struct label *l);
 static void append_global_label(const char *p, size_t line_no, const char *line, struct label *l);
 static void append_static_label(const char *p, size_t line_no, const char *line, struct label *l);
 static size_t get_label_end(const char *p, size_t line_no);
-
-/* Avoid using define so only one copy is allocated. */
-static const char call_directive[] = "call";
 
 struct tree get_function_list(const size_t n_files, const char *const *const files)
 {
@@ -150,23 +151,18 @@ static struct file parse(const char *const buf)
         }
         else if (is_call(line))
         {
-            const char *const called_label = get_call(line);
-            struct label *const l = &f.labels[f.n_labels - 1];
+            /* Call to a specific label. */
+            append_called_label(get_call(line), &f);
+        }
+        else
+        {
+            /* Determine whether there is a reference to a specific label. */
+            const char *const ref = get_ref(line);
 
-            l->calls = alloc(l->calls, l->n_calls);
-
-            if (l->calls)
+            if (ref)
             {
-                char **const calls = &l->calls[l->n_calls];
-                const size_t called_label_len = (strlen(called_label) + 1);
-
-                *calls = malloc(called_label_len * sizeof *called_label);
-
-                if (*calls)
-                {
-                    strncpy(*calls, called_label, called_label_len);
-                    l->n_calls++;
-                }
+                LOG("Function %s is being referrenced", ref);
+                append_called_label(ref, &f);
             }
         }
     }
@@ -186,6 +182,66 @@ static struct file parse(const char *const buf)
     }
 
     return f;
+}
+
+static const char *get_ref(const char *const line)
+{
+    const char *p;
+
+    for (p = line; *p != '#' && *p; p++);
+
+    if (*p)
+    {
+        static const char pattern[] = "#(_";
+
+        if (!strncmp(p, pattern, static_strlen(pattern)))
+        {
+            static char l[MAX_CH_PER_LINE];
+
+            /* Substract one position so the '_' is also returned. */
+            const size_t offset = static_strlen(pattern) - 1;
+            size_t i = 0;
+
+            for (p += offset; *p && *p != ')' && *p != ' ' && i < lengthof (l); p++)
+            {
+                l[i++] = *p;
+            }
+
+            l[i] = '\0';
+
+            return l;
+        }
+    }
+
+    /* No reference was found. */
+    return NULL;
+}
+
+static void append_called_label(const char *const called_label, struct file *const f)
+{
+    if (f && called_label)
+    {
+        if (f->n_labels)
+        {
+            struct label *const l = &f->labels[f->n_labels - 1];
+
+            l->calls = alloc(l->calls, l->n_calls);
+
+            if (l->calls)
+            {
+                char **const calls = &l->calls[l->n_calls];
+                const size_t called_label_len = strlen(called_label) + 1;
+
+                *calls = malloc(called_label_len * sizeof *called_label);
+
+                if (*calls)
+                {
+                    strncpy(*calls, called_label, called_label_len);
+                    l->n_calls++;
+                }
+            }
+        }
+    }
 }
 
 static void append_label(const char *const p, const size_t line_no, const char *const line, struct label *const l)
@@ -225,11 +281,11 @@ static size_t get_label_end(const char *p, size_t line_no)
         }
         else if (is_label(line, len) || strstr(line, ".area"))
         {
-            return line_no - 1;
+            break;
         }
     }
 
-    return 0;
+    return line_no - 1;
 }
 
 static bool is_label(const char *const line, const size_t length)
@@ -258,7 +314,7 @@ static bool is_call(const char *const line)
 {
     if (line)
     {
-        return !strncmp(line, call_directive, static_strlen(call_directive));
+        return !strncmp(line, CALL_DIRECTIVE, static_strlen(CALL_DIRECTIVE));
     }
 
     return false;

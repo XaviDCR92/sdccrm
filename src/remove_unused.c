@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void write_filtered_file(FILE *const fi, const struct file *const f, const char *p);
+static void write_filtered_file(FILE *const fi, const struct tree *const t, const struct file *const f, const char *p);
 
 void remove_unused(const struct tree *const t)
 {
@@ -56,7 +56,7 @@ void remove_unused(const struct tree *const t)
                             if (fi)
                             {
                                 LOG("Filtering %s..", n);
-                                write_filtered_file(fi, f, buf);
+                                write_filtered_file(fi, t, f, buf);
 
                                 fclose(fi);
                             }
@@ -72,7 +72,7 @@ void remove_unused(const struct tree *const t)
     }
 }
 
-static void write_filtered_file(FILE *const fi, const struct file *const f, const char *p)
+static void write_filtered_file(FILE *const fi, const struct tree *const t, const struct file *const f, const char *p)
 {
     /* When true, all lines belonging to selected label shall be ignored. */
     bool remove_label = false;
@@ -83,41 +83,48 @@ static void write_filtered_file(FILE *const fi, const struct file *const f, cons
         if (!remove_label)
         {
             bool skip_global_declaration = false;
+            const char *const global_label = get_global(line);
 
-            for (size_t j = 0; j < f->n_labels; j++)
+            if (global_label)
             {
-                const struct label *const l = &f->labels[j];
-                const char *const global_label = get_global(line);
+                /* A global label declaration was found.
+                 * Determine if it has to be removed. */
 
-                if (global_label)
+                for (size_t i = 0; i < t->n_files; i++)
                 {
-                    /* Remove global symbol declaration if not used. */
+                    const struct file *const f = &t->files[i];
 
-                    for (size_t k = 0; k < f->n_labels; k++)
+                    for (size_t j = 0; j < f->n_labels; j++)
                     {
-                        const struct label *const gl = &f->labels[j];
+                        const struct label *const l = &f->labels[j];
 
-                        if (!gl->used && gl->global)
+                        if (!strcmp(global_label, l->name))
                         {
-                            if ((skip_global_declaration = !strcmp(global_label, gl->name)))
-                            {
-                                LOG("Removing declaration for global unused label %s (%s)", l->name, f->name);
-                                break;
-                            }
+                            skip_global_declaration = !l->used && l->global;
+
+                            /* Exit nested loop. */
+                            goto global_label_found;
                         }
                     }
-
-                    if (skip_global_declaration)
-                        break;
-                }
-                else if (l->start_line == line_no && !l->used)
-                {
-                    remove_label = true;
-                    LOG("Removing unused label %s (%s)", l->name, f->name);
-
-                    break;
                 }
             }
+            else
+            {
+                for (size_t j = 0; j < f->n_labels; j++)
+                {
+                    const struct label *const l = &f->labels[j];
+
+                    if (l->start_line == line_no && !l->used)
+                    {
+                        remove_label = true;
+                        LOG("Removing unused label %s (%s)", l->name, f->name);
+
+                        break;
+                    }
+                }
+            }
+
+            global_label_found:
 
             if (!remove_label && !skip_global_declaration)
             {

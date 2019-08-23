@@ -145,9 +145,10 @@ const char *get_global(const char *const line)
 {
     if (line)
     {
+        static const char globl[] = ".globl";
         const char *p = line;
 
-        if (!strncmp(p, ".globl", static_strlen(".globl")))
+        if (!strncmp(p, globl, static_strlen(globl)))
         {
             /* A global symbol is being defined. */
 

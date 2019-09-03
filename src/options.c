@@ -25,12 +25,14 @@
 #include <stdlib.h>
 
 #define PARAM_STR "[param]"
+#define APP_NAME "sdccrm"
 
 static const struct
 {
     const char *flag;
     const char *descr;
     bool param;
+    bool exits;
     union
     {
         void (*f)(void);
@@ -57,6 +59,13 @@ static const struct
         .descr = "Sets " PARAM_STR " as entry label. Defaults to " DEFAULT_ENTRY_LABEL,
         .param = true,
         .f_param = set_entry_label
+    },
+
+    {
+        .flag = "--version",
+        .descr = "Prints version",
+        .exits = true,
+        .f = show_version
     }
 };
 
@@ -142,7 +151,7 @@ void options_cleanup(void)
     }
 }
 
-int parse_options(const int offset, const int argc, const char *const *const argv)
+int parse_options(const int offset, const int argc, const char *const *const argv, bool *const exit)
 {
     /* Calculate where file list starts. If options
      * are given, this index shall be increased. */
@@ -150,6 +159,7 @@ int parse_options(const int offset, const int argc, const char *const *const arg
 
     bool reading_parameter = false;
     size_t param_i;
+    *exit = false;
 
     for (i = offset; i < argc; i++)
     {
@@ -172,6 +182,12 @@ int parse_options(const int offset, const int argc, const char *const *const arg
                         {
                             options[j].f();
                         }
+                    }
+
+                    if (options[j].exits)
+                    {
+                        *exit = true;
+                        return 0;
                     }
 
                     break;
@@ -203,10 +219,7 @@ int parse_options(const int offset, const int argc, const char *const *const arg
 
 void usage(void)
 {
-    /* Avoid using define so only one copy is stored. */
-    static const char app[] = "sdccrm";
-
-    printf("Usage:\n%s [options] file1 file2 ... filen\n", app);
+    printf("Usage:\n" APP_NAME " [options] file1 file2 ... filen\n");
 
     printf("Options:\n");
 
@@ -214,4 +227,11 @@ void usage(void)
     {
         printf("%s%s%s.\n", options[i].flag, options[i].param ? " " PARAM_STR "\t" : "\t\t", options[i].descr);
     }
+}
+
+void show_version(void)
+{
+    static const char version[] = "0.1";
+
+    printf(APP_NAME " %s\n", version);
 }

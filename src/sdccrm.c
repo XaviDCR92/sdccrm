@@ -43,21 +43,25 @@ int main(const int argc, const char *const argv[])
 
     if (argc >= MINIMUM_PARAMETERS)
     {
-        const int i = parse_options(DEFAULT_ASM_FILE, argc, argv);
+        bool exit;
+        const int i = parse_options(DEFAULT_ASM_FILE, argc, argv, &exit);
 
-        if (i < argc)
+        if (!exit)
         {
-            /* Get file list given calculated index. */
-            const char *const *const files = &argv[i];
+            if (i < argc)
+            {
+                /* Get file list given calculated index. */
+                const char *const *const files = &argv[i];
 
-            /* Substract executable path. */
-            const size_t n_files = argc - i;
+                /* Substract executable path. */
+                const size_t n_files = argc - i;
 
-            start(n_files, files);
-        }
-        else
-        {
-            usage();
+                start(n_files, files);
+            }
+            else
+            {
+                usage();
+            }
         }
     }
     else

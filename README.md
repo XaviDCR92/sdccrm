@@ -37,3 +37,4 @@ Similarly to sdcc, sdccrm is licensed under GPLv3.
 
 # Known issues
 Removing unused declarations and definitions will surely give problems when --debug switch is used by sdcc, as debugging symbols need to point to those now-unexisting labels.
+Unused static variables are not being removed.

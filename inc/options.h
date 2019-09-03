@@ -46,7 +46,8 @@ void enable_verbose(void);
 void exclude_label(const char *const l);
 bool is_label_excluded(const char *const l);
 void options_cleanup(void);
-int parse_options(const int offset, const int argc, const char *const *const argv);
+int parse_options(const int offset, const int argc, const char *const *const argv, bool *const exit);
 void usage(void);
+void show_version(void);
 
 #endif /* OPTIONS_H */

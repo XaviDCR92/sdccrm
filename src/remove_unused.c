@@ -27,48 +27,65 @@
 
 static void write_filtered_file(FILE *const fi, const struct tree *const t, const struct file *const f, const char *p);
 
+static const char *extension = "rm";
+
 void remove_unused(const struct tree *const t)
 {
-    if (t)
+    if (!t) return;
+
+    for (size_t i = 0; i < t->n_files; i++)
     {
-        for (size_t i = 0; i < t->n_files; i++)
+        const struct file *const f = &t->files[i];
+        if (!f->name) continue;
+
+        char *const buf = open(f->name);
+
+        if (!buf) return;
+
+        if(replace())
         {
-            const struct file *const f = &t->files[i];
+            FILE *const fi = fopen(f->name, "w");
 
-            if (f->name)
+            if (fi)
             {
-                char *const buf = open(f->name);
+                LOG("Filtering %s..", f->name);
+                write_filtered_file(fi, t, f, buf);
 
-                if (buf)
-                {
-                    /* Use temporary file extension ".asmrm". */
-                    char *const n = malloc((strlen(f->name) + static_strlen("rm") + 1) * sizeof *n);
-
-                    if (n)
-                    {
-                        strcpy(n, f->name);
-
-                        /* Create final file name. */
-                        if (strcat(n, "rm"))
-                        {
-                            FILE *const fi = fopen(n, "w");
-
-                            if (fi)
-                            {
-                                LOG("Filtering %s..", n);
-                                write_filtered_file(fi, t, f, buf);
-
-                                fclose(fi);
-                            }
-                        }
-
-                        free(n);
-                    }
-
-                    free(buf);
-                }
+                fclose(fi);
             }
+
         }
+        else
+        {
+            /* Use temporary file extension ".asmrm". */
+            char *const n = malloc((strlen(f->name) + strlen(extension) + 1) * sizeof *n);
+            if (!n) 
+            {
+                free(buf);
+                continue;
+            }
+
+            strcpy(n, f->name);
+
+            /* Create final file name. */
+            if (strcat(n, extension))
+            {
+                FILE *const fi = fopen(n, "w");
+
+                if (fi)
+                {
+                    LOG("Filtering %s..", n);
+                    write_filtered_file(fi, t, f, buf);
+
+                    fclose(fi);
+                }
+
+            }
+
+            free(n);
+        }
+
+        free(buf);
     }
 }
 
@@ -124,7 +141,7 @@ static void write_filtered_file(FILE *const fi, const struct tree *const t, cons
                 }
             }
 
-            global_label_found:
+global_label_found:
 
             if (!remove_label && !skip_global_declaration)
             {

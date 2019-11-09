@@ -48,6 +48,14 @@ static const struct
     },
 
     {
+        .flag = "-r",
+        .descr = "Replaces existing .asm file instead of creating .asmrm file",
+        .param = false,
+        .f = enable_replace 
+    },
+
+
+    {
         .flag = "-x",
         .descr = "Excludes a given label " PARAM_STR " from being removed",
         .param = true,
@@ -72,6 +80,7 @@ static const struct
 static struct
 {
     bool verbose;
+    bool replace;
     const char **excluded_labels;
     size_t n_excluded_labels;
     const char *entry_label;
@@ -82,9 +91,19 @@ bool verbose(void)
     return config.verbose;
 }
 
+bool replace(void)
+{
+    return config.replace;
+}
+
 void enable_verbose(void)
 {
     config.verbose = true;
+}
+
+void enable_replace(void)
+{
+    config.replace = true;
 }
 
 const char *get_entry_label(void)

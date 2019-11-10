@@ -1,5 +1,25 @@
 # sdccrm
 
+## IMPORTANT NOTE
+sdccrm will be **deprecated** since native GNU assembler syntax support and unused code elimination
+has been already implemented for SDCC and stm8-binutils-gdb. By generating GNU ```as```-compatible .asm
+files, the GNU toolchain can be used for assembling and linking, where ```stm8-ld``` (thanks to some
+modifications) performs unused code elimination.
+
+These modifications are still not on the official repositories, but can be enjoyed from these
+forks for the time being:
+
+SDCC 3.9.0 fork with GNU as support:
+https://github.com/XaviDCR92/sdcc-gas
+
+stm8-binutils-gdb fork with unused code elimination, bugfixes and improvements:
+https://github.com/XaviDCR92/stm8-binutils-gdb
+
+Minimal working code example demonstrating these new capabilities:
+https://github.com/XaviDCR92/stm8-dce-example
+
+So **sdccrm is no longer needed and will be only kept for those who really need it for some other reason**.
+
 ## What is sdccrm?
 sdccrm is a dead code optimization tool for the stm8 port of sdcc that removes unused functions. By configuring an entry point, sdccrm creates a function call tree and determines which labels can be optimized away.
 

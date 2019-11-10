@@ -7,6 +7,11 @@ sdccrm is a dead code optimization tool for the stm8 port of sdcc that removes u
 ```bash
 sdccrm [options] file1 file2 ...
 ```
+sdccrm will output .asmrm files unless the -r switch is used, which replaces the original .asm files:
+```bash
+sdccrm -r file1 file2 ...
+```
+
 Symbols that are not called from the generated function call tree (e.g.: interrupt handlers only referrenced on the interrupt vector) can be explicitely defined by the user. For example:
 
 ```bash

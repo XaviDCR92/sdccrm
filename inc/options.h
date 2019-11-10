@@ -40,9 +40,11 @@
     }
 
 bool verbose(void);
+bool replace(void);
 const char *get_entry_label(void);
 void set_entry_label(const char *const l);
 void enable_verbose(void);
+void enable_replace(void);
 void exclude_label(const char *const l);
 bool is_label_excluded(const char *const l);
 void options_cleanup(void);
